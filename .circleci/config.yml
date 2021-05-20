@@ -1,45 +1,53 @@
 version: 2
 
+references:
+  defaults: &defaults
+      docker:
+        - image: circleci/openjdk:8-jdk
+          auth:
+            username: $DOCKER_HUB_USERNAME
+            password: $DOCKER_HUB_TOKEN
 # Use a package of configuration called an orb.
 orbs:
   welcome: circleci/welcome-orb@0.4.1
 
 jobs:
   build:
+    <<: *defaults
     steps:
       - run:
-        - name: Downloading Dependencies
-        - command: |
-          echo "downloading stuff..."
-          echo "stuff downloaded!!!"
+          name: Downloading Dependencies
+          command: echo -e "downloading stuff... \n stuff downloaded!!!"
           
       - run:
-        - name: Building Project
-        - command: |
-          echo "running ./gradlew build..."
-          echo "building..."
-          echo "built!!!"
+          name: Building Project
+          command: |
+            echo "running ./gradlew build..."
+            echo "building..."
+            echo "built!!!"
   publish:
+    <<: *defaults
     steps:
       - run:
-        - name: Build, Test, Publish Artifacts
-        - command: |
-          echo "running ./gradlew publish..."
-          echo "publishing..."
-          echo "published!!!"
+          name: Build, Test, Publish Artifacts
+          command: |
+            echo "running ./gradlew publish..."
+            echo "publishing..."
+            echo "published!!!"
   release:
+    <<: *defaults
     steps:
       - run:
-        - name: Configure Github
-        - command: |
-          echo "running git config --global user.name ryli123"
-          echo "running git config --global user.email ****@gmail.com"
+          name: Configure Github
+          command: |
+            echo "running git config --global user.name ryli123"
+            echo "running git config --global user.email ****@gmail.com"
       - run:
-        - name: Release and Publish Artifacts
-        - command: |
-          echo "running ./gradlew release..."
-          echo "releasing..."
-          echo "released!!!"
+          name: Release and Publish Artifacts
+          command: |
+            echo "running ./gradlew release..."
+            echo "releasing..."
+            echo "released!!!"
 
 # Orchestrate or schedule a set of jobs
 workflows:
@@ -49,21 +57,21 @@ workflows:
     # Run the welcome/run job in its own container
     jobs:
       - welcome/run:
-        filters:
-          branches:
-            ignore: master
+          filters:
+            branches:
+              ignore: master
   build:
     jobs:
       - build
       - publish:
-        requires:
-          - build
-        filters:
-          branches:
-            ignore: master
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: master
       - release:
-        requires:
-          - build
-        filters:
-          branches:
-            only: master
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
