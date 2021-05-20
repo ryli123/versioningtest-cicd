@@ -7,9 +7,6 @@ references:
           auth:
             username: $DOCKER_HUB_USERNAME
             password: $DOCKER_HUB_TOKEN
-# Use a package of configuration called an orb.
-orbs:
-  welcome: circleci/welcome-orb@0.4.1
 
 jobs:
   build:
@@ -52,14 +49,6 @@ jobs:
 # Orchestrate or schedule a set of jobs
 workflows:
   version: 2
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
-    jobs:
-      - welcome/run:
-          filters:
-            branches:
-              ignore: master
   build:
     jobs:
       - build
