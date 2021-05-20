@@ -9,6 +9,12 @@ references:
             password: $DOCKER_HUB_TOKEN
 
 jobs:
+  update:
+    <<: *defaults
+    steps:
+      - run:
+          name: Updating Versions
+          command: echo "Using awk or sed or something to increment gradle.properties versions"
   build:
     <<: *defaults
     steps:
@@ -31,6 +37,7 @@ jobs:
             echo "running ./gradlew publish..."
             echo "publishing..."
             echo "published!!!"
+  # if we manually create releases, this won't be needed
   release:
     <<: *defaults
     steps:
@@ -51,6 +58,12 @@ workflows:
   version: 2
   build:
     jobs:
+      - update:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       - build:
           filters:
             tags:
@@ -59,14 +72,8 @@ workflows:
           requires:
             - build
           filters:
-            branches:
-              only: master
-      - release:
-          requires:
-            - build
-          filters:
             tags:
               only: /^v.*/
             branches:
-              ignore: /.*/
+              only: master
               
