@@ -57,10 +57,13 @@ workflows:
             - build
           filters:
             branches:
-              ignore: master
+              only: master
       - release:
           requires:
             - build
           filters:
+            tags:
+              only: /^v.*/
             branches:
-              only: master
+              ignore: /.*/
+              
